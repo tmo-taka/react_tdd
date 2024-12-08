@@ -10,9 +10,10 @@
     "fix": "biome lint --write  **/*.{ts,tsx}",
     "fmt": "biome format --write  **/*.{ts,tsx}",
     "preview": "vite preview",
-    "test": "jest"
+    "test": "test"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.62.3",
     "react": "19.0.0",
     "react-dom": "19.0.0"
   },
