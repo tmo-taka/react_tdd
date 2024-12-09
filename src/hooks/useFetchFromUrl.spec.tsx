@@ -11,12 +11,6 @@ jest.mock('./useFetchFromUrl', () => {
   };
 });
 
-const queryClient = new QueryClient();
-const wrapper = () => (
-  // biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
-  <QueryClientProvider client={queryClient}>テスト</QueryClientProvider>
-);
-
 describe('test useFetchFromUrl', () => {
   let testUrl: string;
   beforeEach(() => {
@@ -24,7 +18,7 @@ describe('test useFetchFromUrl', () => {
   });
   afterEach(() => {
     jest.resetAllMocks();
-    queryClient.clear();
+    // queryClient.clear();
   });
   describe('test fetchData', () => {
     it('should accepts url', async () => {
@@ -33,14 +27,42 @@ describe('test useFetchFromUrl', () => {
     });
   });
   describe('useFetchFromUrl', () => {
+    let wrapper: React.FC<{ children: React.ReactNode }>;
+    let queryClient: QueryClient;
+    beforeEach(() => {
+      queryClient = new QueryClient({
+        defaultOptions: {
+          queries: {
+            retry: false,
+          },
+        },
+      });
+
+      wrapper = ({ children }: { children: React.ReactNode }) => (
+        // biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
+        <QueryClientProvider client={queryClient}>
+          {children}
+        </QueryClientProvider>
+      );
+    });
+
+    afterEach(() => {
+      queryClient.clear();
+    });
     //成功した場合
     it('return data when current fetch ', async () => {
       const { result } = renderHook(
         () => hooks.useFetchFromUrl('key', testUrl),
         { wrapper },
       );
+
+      await waitFor(() => {
+        if (!result.current.isLoading) {
+          throw Error('wait');
+        }
+      });
       console.log(result);
-      await waitFor(() => expect(result.current.isLoading).toBeTruthy());
+      expect(result.current.data).toEqual(testUrl);
     });
     //失敗した場合
   });
