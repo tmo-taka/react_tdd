@@ -2,8 +2,12 @@ import { useQuery } from '@tanstack/react-query';
 
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
 export const fetchData = async (url: string): Promise<any> => {
-  const res = await fetch(url);
-  return res;
+  try {
+    const res = await fetch(url);
+    return res;
+  } catch (error) {
+    throw new Error('Fetch failed');
+  }
 };
 
 export const useFetchFromUrl = (
@@ -12,10 +16,10 @@ export const useFetchFromUrl = (
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   fetchFunction: (url: string) => Promise<any>,
 ) => {
-  const { data, isSuccess } = useQuery({
+  const { data, error, isSuccess } = useQuery({
     queryKey: [key],
     queryFn: () => fetchFunction(url),
   });
 
-  return { data, isSuccess };
+  return { data, error, isSuccess };
 };

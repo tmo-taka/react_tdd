@@ -14,10 +14,6 @@ describe('test useFetchFromUrl', () => {
   beforeEach(() => {
     testUrl = 'https://www.dummmy.com/';
   });
-  afterEach(() => {
-    jest.resetAllMocks();
-    // queryClient.clear();
-  });
   describe('test fetchData', () => {
     it('should accepts url', async () => {
       const res = await hooks.fetchData(testUrl);
@@ -35,6 +31,7 @@ describe('test useFetchFromUrl', () => {
             staleTime: 0,
             refetchOnMount: false,
             refetchOnWindowFocus: false,
+            gcTime: 0,
           },
         },
       });
@@ -49,6 +46,7 @@ describe('test useFetchFromUrl', () => {
 
     afterEach(() => {
       queryClient.clear();
+      jest.resetAllMocks();
     });
     //成功した場合
     it('return data when current fetch ', async () => {
@@ -65,5 +63,21 @@ describe('test useFetchFromUrl', () => {
     });
 
     //失敗した場合
+    it('throw Error when current fetch ', async () => {
+      (hooks.fetchData as jest.Mock).mockImplementation((url) => {
+        throw new Error('Fetch failed');
+      });
+      const { result } = renderHook(
+        () => hooks.useFetchFromUrl('key', testUrl, hooks.fetchData),
+        { wrapper },
+      );
+
+      await waitFor(() => {
+        expect(result.current.error).toBeDefined();
+        expect(result.current.error?.message).toBe('Fetch failed');
+      });
+
+      expect(result.current.data).toBeUndefined();
+    });
   });
 });
