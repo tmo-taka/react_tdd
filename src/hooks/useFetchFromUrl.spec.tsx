@@ -5,9 +5,7 @@ jest.mock('./useFetchFromUrl', () => {
   const originalModule = jest.requireActual('./useFetchFromUrl');
   return {
     ...originalModule,
-    fetchData: jest.fn((url) => ({
-      data: url,
-    })),
+    fetchData: jest.fn((url) => url),
   };
 });
 
@@ -23,7 +21,7 @@ describe('test useFetchFromUrl', () => {
   describe('test fetchData', () => {
     it('should accepts url', async () => {
       const res = await hooks.fetchData(testUrl);
-      expect(res).toEqual({ data: testUrl });
+      expect(res).toEqual(testUrl);
     });
   });
   describe('useFetchFromUrl', () => {
@@ -34,6 +32,9 @@ describe('test useFetchFromUrl', () => {
         defaultOptions: {
           queries: {
             retry: false,
+            staleTime: 0,
+            refetchOnMount: false,
+            refetchOnWindowFocus: false,
           },
         },
       });
@@ -52,18 +53,17 @@ describe('test useFetchFromUrl', () => {
     //成功した場合
     it('return data when current fetch ', async () => {
       const { result } = renderHook(
-        () => hooks.useFetchFromUrl('key', testUrl),
+        () => hooks.useFetchFromUrl('key', testUrl, hooks.fetchData),
         { wrapper },
       );
 
       await waitFor(() => {
-        if (!result.current.isLoading) {
-          throw Error('wait');
-        }
+        return result.current.isSuccess;
       });
-      console.log(result);
+
       expect(result.current.data).toEqual(testUrl);
     });
+
     //失敗した場合
   });
 });
