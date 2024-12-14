@@ -1,6 +1,6 @@
-import { renderHook, waitFor } from '@testing-library/react';
+import { renderHook } from '@testing-library/react';
 import type { EnglishArr, EnglishObj } from '../domain/englishArr';
-import { usePickQuestions } from './usePickQuestions';
+import { pickQuestions } from './pickQuestions';
 
 const generateMockEnglishArr = (n: number): EnglishArr => {
   const mock: EnglishArr = [];
@@ -24,9 +24,9 @@ describe('test usePickQuestions', () => {
   });
   it('should return arr has 10 items', () => {
     const requiredProperties = ['word', 'japanese'];
-    const { result } = renderHook(() => usePickQuestions(args));
-    expect(result.current.length).toBe(10);
-    for (const obj of result.current) {
+    const questions = pickQuestions(args);
+    expect(questions.length).toBe(10);
+    for (const obj of questions) {
       for (const prop of requiredProperties) {
         expect(obj).toHaveProperty(prop);
       }
@@ -35,14 +35,14 @@ describe('test usePickQuestions', () => {
 
   it('should throw error when input empty array', () => {
     expect(() => {
-      renderHook(() => usePickQuestions([]));
+      pickQuestions([]);
     }).toThrow(Error('An array with less than 10 items was passed'));
   });
 
   it('should throw error when input array has less than 10 items', () => {
     const mock = generateMockEnglishArr(9);
     expect(() => {
-      renderHook(() => usePickQuestions(mock));
+      pickQuestions(mock);
     }).toThrow(Error('An array with less than 10 items was passed'));
   });
 });
