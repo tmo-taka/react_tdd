@@ -14,7 +14,7 @@ const generateMockEnglishArr = (n: number): EnglishArr => {
   return mock;
 };
 
-describe('test usePickQuestions', () => {
+describe('test pickQuestions', () => {
   let args: EnglishArr = [];
   beforeEach(() => {
     args = generateMockEnglishArr(200);

@@ -1,7 +1,6 @@
 import type { EnglishArr, EnglishObj } from '../domain/englishArr';
 
 export const convertToEnglishArr = (csvData: string): EnglishArr => {
-  console.log(csvData);
   const lines = csvData.trim().split('\n');
   const result: EnglishArr = lines.slice(1).map((line) => {
     const obj: EnglishObj = {
