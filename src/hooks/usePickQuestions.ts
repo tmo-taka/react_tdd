@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { DEFAULT_OUTPUT_QUESTIONS_COUNT } from '../const';
 import type { EnglishArr, EnglishObj } from '../domain/englishArr';
 
@@ -10,12 +11,13 @@ export const usePickQuestions = (englishArr: EnglishArr): EnglishArr => {
     );
   }
 
-  const questions: EnglishArr = [];
+  const [questions, setQuestion] = useState<EnglishArr>([]);
+
   for (let i = 0; i < DEFAULT_OUTPUT_QUESTIONS_COUNT; i++) {
     const randomNumber = generateRandom(englishArr.length);
     const targetEnglish = englishArr[randomNumber];
     englishArr.splice(randomNumber, 1);
-    questions.push(targetEnglish as unknown as EnglishObj);
+    setQuestion((prev) => [...prev, targetEnglish]);
   }
 
   return questions;
