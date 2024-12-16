@@ -10,8 +10,11 @@ export const useQuestions = () => {
       const targetIndex = englishArr.findIndex(
         (english) => english.word === word,
       );
+      if (targetIndex === -1) {
+        throw new Error('this word is not included in EnglishArr');
+      }
       for (const correctText of englishArr[targetIndex].japanese) {
-        if (correctText === inputtedText) {
+        if (inputtedText.length >= 2 && correctText.includes(inputtedText)) {
           setCorrectFlag(true);
         }
       }

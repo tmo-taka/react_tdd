@@ -7,7 +7,7 @@ afterEach(() => {
 });
 
 describe('test useEnglishArr', () => {
-  it('should return state of EnglishArr when set EnglishArr', () => {
+  it('should initialize englishArr with the correct structure when set', () => {
     const { result } = renderHook(() => useQuestions());
     act(() => {
       result.current.setEnglishArr(formattedEnglishArr);
@@ -19,7 +19,7 @@ describe('test useEnglishArr', () => {
     );
   });
 
-  it('should set correctFlag is true if given inputted text is current', () => {
+  it('should mark answer as correct when exact match is provided', () => {
     const { result } = renderHook(() => useQuestions());
     act(() => {
       result.current.setEnglishArr(formattedEnglishArr);
@@ -29,5 +29,42 @@ describe('test useEnglishArr', () => {
       result.current.checkedAnswer('get', '得る(受動態にできない)');
     });
     expect(result.current.correctFlag).toBe(true);
+  });
+
+  it('should mark answer as correct when partial match is provided', () => {
+    const { result } = renderHook(() => useQuestions());
+    act(() => {
+      result.current.setEnglishArr(formattedEnglishArr);
+    });
+
+    act(() => {
+      result.current.checkedAnswer('get', '得る');
+    });
+    expect(result.current.correctFlag).toBe(true);
+  });
+
+  it('should keep correctFlag as false when incorrect answer is provided', () => {
+    const { result } = renderHook(() => useQuestions());
+    act(() => {
+      result.current.setEnglishArr(formattedEnglishArr);
+    });
+
+    act(() => {
+      result.current.checkedAnswer('get', 'ご飯');
+    });
+    expect(result.current.correctFlag).toBe(false);
+  });
+
+  it('should throw an error when checking an answer for non-existent word', () => {
+    const { result } = renderHook(() => useQuestions());
+    act(() => {
+      result.current.setEnglishArr(formattedEnglishArr);
+    });
+
+    expect(() => {
+      act(() => {
+        result.current.checkedAnswer('test', 'ご飯');
+      });
+    }).toThrow(new Error('this word is not included in EnglishArr'));
   });
 });
