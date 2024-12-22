@@ -62,9 +62,11 @@ describe('test QuestionForm.tsx', () => {
   it('should have a textForm and value is empty', () => {
     render(<QuestionForm {..._defaultProps} />);
     const textForm = screen.getByRole('textbox');
+    const label = screen.getByLabelText('tip');
     const alertDivElement = screen.queryByRole('region');
 
     expect(textForm).toBeInTheDocument();
+    expect(label).toBeInTheDocument();
     expect(textForm).toHaveValue('');
     expect(alertDivElement).not.toBeInTheDocument();
   });
@@ -72,7 +74,9 @@ describe('test QuestionForm.tsx', () => {
   it('should update value when typing in textForm', async () => {
     render(<QuestionForm {..._defaultProps} />);
     const inputText = 'test';
-    const textForm = screen.getByRole('textbox', { name: '' });
+    const textForm = screen.getByRole('textbox', {
+      name: 'Enter translation for tip',
+    });
     await user.type(textForm, inputText);
     expect(screen.getByRole('textbox')).toHaveValue(inputText);
   });
@@ -80,7 +84,9 @@ describe('test QuestionForm.tsx', () => {
   it('should set true with setCorrectFlag when inputted correct answer', async () => {
     render(<QuestionForm {..._defaultProps} />);
     const inputText = 'はし';
-    const textForm = screen.getByRole('textbox', { name: '' });
+    const textForm = screen.getByRole('textbox', {
+      name: 'Enter translation for tip',
+    });
     await user.type(textForm, inputText);
     await user.tab();
     expect(mockJudgeCorrectFlag).toHaveBeenCalledWith(
@@ -94,7 +100,9 @@ describe('test QuestionForm.tsx', () => {
   it('should set true with setCorrectFlag when inputted correct answer', async () => {
     render(<QuestionForm {..._defaultProps} />);
     const inputText = '間違い';
-    const textForm = screen.getByRole('textbox', { name: '' });
+    const textForm = screen.getByRole('textbox', {
+      name: 'Enter translation for tip',
+    });
     await user.type(textForm, inputText);
     await user.tab();
     expect(mockJudgeCorrectFlag).toHaveBeenCalledWith(

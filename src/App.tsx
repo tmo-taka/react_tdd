@@ -4,6 +4,7 @@ import { fetchData, useFetchFromUrl } from './hooks/useFetchFromUrl';
 import { useQuestions } from './hooks/useQuestions';
 import { convertToEnglishArr } from './utils/convertToEnglishArr';
 import { pickQuestions } from './utils/pickQuestions';
+import { QuestionForm } from './components/QuestionForm';
 
 function App() {
   const { data, isSuccess } = useFetchFromUrl('english', '/api', fetchData);
@@ -18,13 +19,17 @@ function App() {
       });
     };
     processData();
-  }, [isSuccess, data]);
+  }, [isSuccess, data, setEnglishArr]);
   return (
     <>
       {isSuccess && englishArr ? (
         <ul>
           {englishArr.map((item) => {
-            return <li key={item.word}>{item.word}</li>;
+            return (
+              <li key={item.word}>
+                <QuestionForm word={item.word} />
+              </li>
+            );
           })}
         </ul>
       ) : (

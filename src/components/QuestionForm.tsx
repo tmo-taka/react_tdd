@@ -10,9 +10,13 @@ export const QuestionForm = (props: Props): JSX.Element => {
   const { correctFlag, judgeCorrectFlag, englishArr } = useQuestions();
   return (
     <form action="">
+      <label htmlFor={`word-${props.word}`}>{props.word}</label>
+      <br />
       <input
+        id={`word-${props.word}`}
         type="text"
         value={text}
+        aria-label={`Enter translation for ${props.word}`}
         onChange={(e) => setText(e.target.value)}
         onBlur={() => judgeCorrectFlag(props.word, text, englishArr)}
       />
