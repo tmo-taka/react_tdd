@@ -1,48 +1,45 @@
 import { renderHook, act } from '@testing-library/react';
 import { useQuestions } from './useQuestions';
+import { useEnglishStore } from '../store/englishStore';
 import { formattedEnglishArr } from '../__test__/formattedEnglishArr';
+import type { EnglishObj } from '../domain/englishArr';
 
-afterEach(() => {
-  jest.clearAllMocks();
-});
+jest.mock('../store/englishStore', () => ({
+  useEnglishStore: jest.fn(),
+}));
 
 describe('test useEnglishArr', () => {
-  it('should initialize englishArr with the correct structure when set', () => {
-    const { result } = renderHook(() => useQuestions());
-    act(() => {
-      result.current.setEnglishArr(formattedEnglishArr);
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  beforeEach(() => {
+    (useEnglishStore as jest.Mock).mockReturnValue({
+      englishArr: formattedEnglishArr,
+      setEnglishArr: jest.fn(),
+      getJapanesesByWord: jest.fn((word: string) => {
+        const targetObj: EnglishObj | undefined = formattedEnglishArr.find(
+          (english) => english.word === word,
+        );
+        return (targetObj as EnglishObj).japanese;
+      }),
     });
-    expect(result.current.englishArr).toBeDefined();
-    expect(result.current.englishArr).toHaveLength(10);
-    expect(Object.keys(result.current.englishArr[1])).toEqual(
-      expect.arrayContaining(['word', 'japanese']),
-    );
   });
 
   it('should mark answer as correct when exact match is provided', () => {
     const { result } = renderHook(() => useQuestions());
-    act(() => {
-      result.current.setEnglishArr(formattedEnglishArr);
-    });
 
     act(() => {
-      result.current.judgeCorrectFlag(
-        'get',
-        '得る(受動態にできない)',
-        result.current.englishArr,
-      );
+      result.current.judgeCorrectFlag('get', '得る(受動態にできない)');
     });
     expect(result.current.correctFlag).toBe(true);
   });
 
   it('should mark answer as correct when partial match is provided', () => {
     const { result } = renderHook(() => useQuestions());
-    act(() => {
-      result.current.setEnglishArr(formattedEnglishArr);
-    });
 
     act(() => {
-      result.current.judgeCorrectFlag('get', '得る', result.current.englishArr);
+      result.current.judgeCorrectFlag('get', '得る');
     });
     expect(result.current.correctFlag).toBe(true);
   });
@@ -50,16 +47,12 @@ describe('test useEnglishArr', () => {
   it('should keep correctFlag as false when incorrect answer is provided', () => {
     const { result } = renderHook(() => useQuestions());
     act(() => {
-      result.current.setEnglishArr(formattedEnglishArr);
-    });
-
-    act(() => {
-      result.current.judgeCorrectFlag('get', 'ご飯', result.current.englishArr);
+      result.current.judgeCorrectFlag('get', 'ご飯');
     });
     expect(result.current.correctFlag).toBe(false);
   });
 
-  it('should throw an error when checking an answer for non-existent word', () => {
+  it('should throw an error when list of japanese is empty', () => {
     const { result } = renderHook(() => useQuestions());
     act(() => {
       result.current.setEnglishArr(formattedEnglishArr);
@@ -67,12 +60,8 @@ describe('test useEnglishArr', () => {
 
     expect(() => {
       act(() => {
-        result.current.judgeCorrectFlag(
-          'test',
-          'ご飯',
-          result.current.englishArr,
-        );
+        result.current.judgeCorrectFlag('do', 'ご飯');
       });
-    }).toThrow(new Error('this word is not included in EnglishArr'));
+    }).toThrow(new Error('this word is not correct dat'));
   });
 });

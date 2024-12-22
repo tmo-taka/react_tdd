@@ -11,7 +11,7 @@ export const formattedEnglishArr: EnglishArr = [
   },
   {
     word: 'do',
-    japanese: [''],
+    japanese: [],
   },
   {
     word: 'something',

@@ -1,39 +1,24 @@
 import { useCallback, useState } from 'react';
-import type { EnglishArr } from '../domain/englishArr';
-
-const checkedAnswer = (
-  word: string,
-  inputtedText: string,
-  englishArr: EnglishArr,
-) => {
-  console.log(word);
-  const targetIndex = englishArr.findIndex((english) => english.word === word);
-  console.log(targetIndex);
-  if (targetIndex === -1) {
-    throw new Error('this word is not included in EnglishArr');
-  }
-  for (const correctText of englishArr[targetIndex].japanese) {
-    if (inputtedText.length >= 2 && correctText.includes(inputtedText)) {
-      return true;
-    }
-  }
-  return false;
-};
+import { useEnglishStore } from '../store/englishStore';
 
 export const useQuestions = () => {
-  const [englishArr, setEnglishArr] = useState<EnglishArr>([]);
+  const { englishArr, setEnglishArr, getJapanesesByWord } = useEnglishStore();
   const [correctFlag, setCorrectFlag] = useState(false);
 
   const judgeCorrectFlag = useCallback(
-    (word: string, inputtedText: string, englishArr: EnglishArr) => {
-      const isCorrect = checkedAnswer(word, inputtedText, englishArr);
+    (word: string, inputtedText: string) => {
+      const japaneseList = getJapanesesByWord(word);
+      if (japaneseList.length === 0) {
+        throw new Error('this word is not correct data');
+      }
+      const isCorrect =
+        inputtedText.length >= 2 &&
+        japaneseList.some((japanese: string) =>
+          japanese.includes(inputtedText),
+        );
       setCorrectFlag(isCorrect);
     },
-    [],
+    [getJapanesesByWord],
   );
   return { englishArr, correctFlag, setEnglishArr, judgeCorrectFlag };
-};
-
-export const _test_ = {
-  checkedAnswer,
 };
