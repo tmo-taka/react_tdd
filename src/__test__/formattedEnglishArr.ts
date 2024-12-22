@@ -1,4 +1,6 @@
-export const formattedEnglishArr = [
+import type { EnglishArr } from '../domain/englishArr';
+
+export const formattedEnglishArr: EnglishArr = [
   {
     word: 'memory',
     japanese: ['記憶[力] / 思い出', '思い出の人(物', '事)'],
