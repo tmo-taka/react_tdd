@@ -26,7 +26,7 @@ describe('test useEnglishArr', () => {
     });
 
     act(() => {
-      result.current.checkedAnswer(
+      result.current.judgeCorrectFlag(
         'get',
         '得る(受動態にできない)',
         result.current.englishArr,
@@ -42,7 +42,7 @@ describe('test useEnglishArr', () => {
     });
 
     act(() => {
-      result.current.checkedAnswer('get', '得る', result.current.englishArr);
+      result.current.judgeCorrectFlag('get', '得る', result.current.englishArr);
     });
     expect(result.current.correctFlag).toBe(true);
   });
@@ -54,7 +54,7 @@ describe('test useEnglishArr', () => {
     });
 
     act(() => {
-      result.current.checkedAnswer('get', 'ご飯', result.current.englishArr);
+      result.current.judgeCorrectFlag('get', 'ご飯', result.current.englishArr);
     });
     expect(result.current.correctFlag).toBe(false);
   });
@@ -67,7 +67,11 @@ describe('test useEnglishArr', () => {
 
     expect(() => {
       act(() => {
-        result.current.checkedAnswer('test', 'ご飯', result.current.englishArr);
+        result.current.judgeCorrectFlag(
+          'test',
+          'ご飯',
+          result.current.englishArr,
+        );
       });
     }).toThrow(new Error('this word is not included in EnglishArr'));
   });
