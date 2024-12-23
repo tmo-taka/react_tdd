@@ -1,22 +1,34 @@
 import { QuestionForm } from './QuestionForm';
-import * as hooks from '../hooks/useQuestions';
 import { screen, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { formattedEnglishArr } from '../__test__/formattedEnglishArr';
+import * as hooks from '../hooks/useQuestions';
+import { Provider } from 'jotai';
+import { useEnglishStore } from '../store/englishStore';
+import type { EnglishArr } from '../domain/englishArr';
 
 jest.mock('../hooks/useQuestions', () => {
-  const actual = jest.requireActual('../hooks/useQuestions');
   return {
-    ...actual,
     useQuestions: jest.fn(),
-    _test_: {
-      ...actual._test_,
-      // checkedAnswerは実際の関数を使用
-      checkedAnswer: actual._test_.checkedAnswer,
-    },
   };
 });
 const user = userEvent.setup();
+
+type ArgsOfProvider = {
+  englishArr: EnglishArr;
+  children: React.ReactNode;
+};
+
+const HydrateAtoms = ({ englishArr, children }: ArgsOfProvider) => {
+  useEnglishStore().setEnglishArr(englishArr);
+  return children;
+};
+
+const TestProvider = ({ englishArr, children }: ArgsOfProvider) => (
+  <Provider>
+    <HydrateAtoms englishArr={englishArr}>{children}</HydrateAtoms>
+  </Provider>
+);
 
 describe('test QuestionForm.tsx', () => {
   let _defaultProps: {
@@ -28,26 +40,23 @@ describe('test QuestionForm.tsx', () => {
     _defaultProps = {
       word: 'tip',
     };
-    mockSetCorrectFlag = jest.fn();
 
-    type ArgsOfCheckedAnswer = Parameters<typeof hooks._test_.checkedAnswer>;
+    mockSetCorrectFlag = jest.fn();
 
     mockJudgeCorrectFlag = jest
       .fn()
-      .mockImplementation(
-        (
-          word: ArgsOfCheckedAnswer[0],
-          inputtedText: ArgsOfCheckedAnswer[1],
-          englishArr: ArgsOfCheckedAnswer[2],
-        ) => {
-          const isCorrectedFlag = hooks._test_.checkedAnswer(
-            word,
-            inputtedText,
-            englishArr,
+      .mockImplementation((word: string, inputtedText: string) => {
+        const targetIndex = formattedEnglishArr.findIndex(
+          (obj) => obj.word === word,
+        );
+        const japaneseList = formattedEnglishArr[targetIndex].japanese;
+        const isCorrect =
+          inputtedText.length >= 2 &&
+          japaneseList.some((japanese: string) =>
+            japanese.includes(inputtedText),
           );
-          mockSetCorrectFlag(isCorrectedFlag);
-        },
-      );
+        mockSetCorrectFlag(isCorrect);
+      });
 
     (hooks.useQuestions as jest.Mock).mockReturnValue({
       englishArr: formattedEnglishArr,
@@ -60,7 +69,11 @@ describe('test QuestionForm.tsx', () => {
     jest.clearAllMocks();
   });
   it('should have a textForm and value is empty', () => {
-    render(<QuestionForm {..._defaultProps} />);
+    render(
+      <TestProvider englishArr={formattedEnglishArr}>
+        <QuestionForm {..._defaultProps} />
+      </TestProvider>,
+    );
     const textForm = screen.getByRole('textbox');
     const label = screen.getByLabelText('tip');
     const alertDivElement = screen.queryByRole('region');
@@ -72,7 +85,11 @@ describe('test QuestionForm.tsx', () => {
   });
 
   it('should update value when typing in textForm', async () => {
-    render(<QuestionForm {..._defaultProps} />);
+    render(
+      <TestProvider englishArr={formattedEnglishArr}>
+        <QuestionForm {..._defaultProps} />
+      </TestProvider>,
+    );
     const inputText = 'test';
     const textForm = screen.getByRole('textbox', {
       name: 'Enter translation for tip',
@@ -89,11 +106,7 @@ describe('test QuestionForm.tsx', () => {
     });
     await user.type(textForm, inputText);
     await user.tab();
-    expect(mockJudgeCorrectFlag).toHaveBeenCalledWith(
-      'tip',
-      inputText,
-      formattedEnglishArr,
-    );
+    expect(mockJudgeCorrectFlag).toHaveBeenCalledWith('tip', inputText);
     expect(mockSetCorrectFlag).toHaveBeenCalledWith(true);
   });
 
@@ -105,11 +118,7 @@ describe('test QuestionForm.tsx', () => {
     });
     await user.type(textForm, inputText);
     await user.tab();
-    expect(mockJudgeCorrectFlag).toHaveBeenCalledWith(
-      'tip',
-      inputText,
-      formattedEnglishArr,
-    );
+    expect(mockJudgeCorrectFlag).toHaveBeenCalledWith('tip', inputText);
     expect(mockSetCorrectFlag).toHaveBeenCalledWith(false);
   });
 });

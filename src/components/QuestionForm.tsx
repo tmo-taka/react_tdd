@@ -7,7 +7,7 @@ type Props = {
 
 export const QuestionForm = (props: Props): JSX.Element => {
   const [text, setText] = useState('');
-  const { correctFlag, judgeCorrectFlag, englishArr } = useQuestions();
+  const { correctFlag, judgeCorrectFlag } = useQuestions();
   return (
     <form action="">
       <label htmlFor={`word-${props.word}`}>{props.word}</label>
@@ -18,7 +18,7 @@ export const QuestionForm = (props: Props): JSX.Element => {
         value={text}
         aria-label={`Enter translation for ${props.word}`}
         onChange={(e) => setText(e.target.value)}
-        onBlur={() => judgeCorrectFlag(props.word, text, englishArr)}
+        onBlur={() => judgeCorrectFlag(props.word, text)}
       />
       {correctFlag && (
         // biome-ignore lint/a11y/useSemanticElements: <explanation>
