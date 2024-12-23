@@ -54,14 +54,16 @@ describe('test useEnglishArr', () => {
 
   it('should throw an error when list of japanese is empty', () => {
     const { result } = renderHook(() => useQuestions());
-    act(() => {
-      result.current.setEnglishArr(formattedEnglishArr);
+
+    (useEnglishStore as jest.Mock).mockReturnValue({
+      ...useEnglishStore(),
+      englishArr: [],
     });
 
     expect(() => {
       act(() => {
         result.current.judgeCorrectFlag('do', 'ご飯');
       });
-    }).toThrow(new Error('this word is not correct dat'));
+    }).toThrow(new Error('this word is not correct data'));
   });
 });

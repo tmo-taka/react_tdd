@@ -5,6 +5,7 @@ import { useQuestions } from './hooks/useQuestions';
 import { convertToEnglishArr } from './utils/convertToEnglishArr';
 import { pickQuestions } from './utils/pickQuestions';
 import { QuestionForm } from './components/QuestionForm';
+import { Provider } from 'jotai';
 
 function App() {
   const { data, isSuccess } = useFetchFromUrl('english', '/api', fetchData);
@@ -21,7 +22,7 @@ function App() {
     processData();
   }, [isSuccess, data, setEnglishArr]);
   return (
-    <>
+    <Provider>
       {isSuccess && englishArr ? (
         <ul>
           {englishArr.map((item) => {
@@ -35,7 +36,7 @@ function App() {
       ) : (
         <div>ローディング</div>
       )}
-    </>
+    </Provider>
   );
 }
 

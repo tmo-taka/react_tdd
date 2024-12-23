@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { useEnglishStore } from '../store/englishStore';
 
 export const useQuestions = () => {
-  const { englishArr, setEnglishArr, getJapanesesByWord } = useEnglishStore();
+  const { getJapanesesByWord } = useEnglishStore();
   const [correctFlag, setCorrectFlag] = useState(false);
 
   const judgeCorrectFlag = useCallback(
@@ -20,5 +20,5 @@ export const useQuestions = () => {
     },
     [getJapanesesByWord],
   );
-  return { englishArr, correctFlag, setEnglishArr, judgeCorrectFlag };
+  return { correctFlag, judgeCorrectFlag };
 };
