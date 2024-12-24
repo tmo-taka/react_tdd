@@ -3,12 +3,26 @@ import { useQuestions } from './useQuestions';
 import { useEnglishStore } from '../store/englishStore';
 import { formattedEnglishArr } from '../__test__/formattedEnglishArr';
 import type { EnglishObj } from '../domain/englishArr';
+import { getJapanesesByWordAtom } from '../../src/store/englishStore';
+
+jest.mock('jotai', () => ({
+  useAtomValue: jest.fn((atom) => {
+    if (atom === getJapanesesByWordAtom) {
+      return (word: string) => {
+        const targetObj: EnglishObj | undefined = formattedEnglishArr.find(
+          (english) => english.word === word,
+        );
+        return (targetObj as EnglishObj).japanese;
+      };
+    }
+  }),
+}));
 
 jest.mock('../store/englishStore', () => ({
   useEnglishStore: jest.fn(),
 }));
 
-describe('test useEnglishArr', () => {
+describe('test useQuestions', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -16,13 +30,6 @@ describe('test useEnglishArr', () => {
   beforeEach(() => {
     (useEnglishStore as jest.Mock).mockReturnValue({
       englishArr: formattedEnglishArr,
-      setEnglishArr: jest.fn(),
-      getJapanesesByWord: jest.fn((word: string) => {
-        const targetObj: EnglishObj | undefined = formattedEnglishArr.find(
-          (english) => english.word === word,
-        );
-        return (targetObj as EnglishObj).japanese;
-      }),
     });
   });
 

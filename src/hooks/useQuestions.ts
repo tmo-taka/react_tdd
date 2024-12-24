@@ -1,8 +1,9 @@
 import { useCallback, useState } from 'react';
-import { useEnglishStore } from '../store/englishStore';
+import { getJapanesesByWordAtom } from '../store/englishStore';
+import { useAtomValue } from 'jotai';
 
 export const useQuestions = () => {
-  const { getJapanesesByWord } = useEnglishStore();
+  const getJapanesesByWord = useAtomValue(getJapanesesByWordAtom);
   const [correctFlag, setCorrectFlag] = useState(false);
 
   const judgeCorrectFlag = useCallback(
