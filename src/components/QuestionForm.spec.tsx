@@ -109,12 +109,12 @@ describe('test QuestionForm.tsx', () => {
       name: 'Enter translation for tip',
     });
     await user.type(textForm, inputText);
-    await user.tab();
+    await user.type(textForm, '{Enter}');
     expect(mockJudgeCorrectFlag).toHaveBeenCalledWith('tip', inputText);
     expect(mockSetCorrectFlag).toHaveBeenCalledWith(true);
   });
 
-  it('should set true with setCorrectFlag when inputted correct answer', async () => {
+  it('should set false with setCorrectFlag when inputted wrong answer', async () => {
     render(
       <TestProvider englishArr={formattedEnglishArr}>
         <QuestionForm {..._defaultProps} />
@@ -125,12 +125,39 @@ describe('test QuestionForm.tsx', () => {
       name: 'Enter translation for tip',
     });
     await user.type(textForm, inputText);
-    await user.tab();
+    await user.type(textForm, '{Enter}');
     expect(mockJudgeCorrectFlag).toHaveBeenCalledWith('tip', inputText);
     expect(mockSetCorrectFlag).toHaveBeenCalledWith(false);
   });
 
-  it('should div element of region is display when inputted 1 character', async () => {
+  it('should div element of region and case of correctMessage is display when correctFlag is true', async () => {
+    (hooks.useQuestions as jest.Mock).mockReturnValue({
+      englishArr: formattedEnglishArr,
+      correctFlag: true,
+      setEnglishArr: jest.fn(),
+      judgeCorrectFlag: mockJudgeCorrectFlag,
+    });
+
+    render(
+      <TestProvider englishArr={formattedEnglishArr}>
+        <QuestionForm {..._defaultProps} />
+      </TestProvider>,
+    );
+
+    const inputText = 'はし';
+    const textForm = screen.getByRole('textbox', {
+      name: 'Enter translation for tip',
+    });
+    await user.type(textForm, inputText);
+    await user.type(textForm, '{Enter}');
+    const alertBox = await screen.findByRole('region');
+    expect(alertBox).toBeInTheDocument();
+    expect(alertBox).toHaveTextContent(
+      /正解です。他にも以下の意味があります。/,
+    );
+  });
+
+  it('should div element of region and case of wrongMessage is display when correctFlag is false', async () => {
     render(
       <TestProvider englishArr={formattedEnglishArr}>
         <QuestionForm {..._defaultProps} />
@@ -141,10 +168,13 @@ describe('test QuestionForm.tsx', () => {
       name: 'Enter translation for tip',
     });
     await user.type(textForm, inputText);
-    await user.tab();
+    await user.type(textForm, '{Enter}');
 
     const alertBox = await screen.findByRole('region');
     expect(alertBox).toBeInTheDocument();
+    expect(alertBox).toHaveTextContent(
+      /回答が間違っています。正しくは以下です。/,
+    );
     expect(alertBox).toHaveTextContent(
       /\(…の\)先はし先端 \/ 先端に付ける物\(部分\)/,
     );

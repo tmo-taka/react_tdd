@@ -9,11 +9,22 @@ type Props = {
 
 export const QuestionForm = (props: Props): JSX.Element => {
   const [text, setText] = useState('');
+  const [isSubmit, setIsSubmit] = useState(false);
   const { correctFlag, judgeCorrectFlag } = useQuestions();
   const getJapanesesByWord = useAtomValue(getJapanesesByWordAtom);
   const japaneseList = getJapanesesByWord(props.word);
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    judgeCorrectFlag(props.word, text);
+    setIsSubmit(true);
+  };
+  const judgeTextFromCorrectFlag = correctFlag
+    ? '正解です。他にも以下の意味があります。'
+    : '回答が間違っています。正しくは以下です。';
+
   return (
-    <form action="">
+    <form onSubmit={(e) => handleSubmit(e)}>
       <label htmlFor={`word-${props.word}`}>{props.word}</label>
       <br />
       <input
@@ -22,15 +33,12 @@ export const QuestionForm = (props: Props): JSX.Element => {
         value={text}
         aria-label={`Enter translation for ${props.word}`}
         onChange={(e) => setText(e.target.value)}
-        onBlur={() => judgeCorrectFlag(props.word, text)}
       />
-      {!correctFlag && text.length > 0 && (
+
+      {isSubmit && (
         // biome-ignore lint/a11y/useSemanticElements: <explanation>
-        <div role="region" aria-expanded={correctFlag}>
-          回答が間違っています
-          <br />
-          正しくは以下です。
-          <br />
+        <div role="region" aria-expanded={isSubmit}>
+          {judgeTextFromCorrectFlag}
           <ul>
             {japaneseList.map((japanese) => (
               <li key={japanese}>{japanese}</li>
