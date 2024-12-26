@@ -51,6 +51,24 @@ describe('test useQuestions', () => {
     expect(result.current.correctFlag).toBe(true);
   });
 
+  it('should mark answer as correct when partial match and even single character is provided', () => {
+    const { result } = renderHook(() => useQuestions());
+
+    act(() => {
+      result.current.judgeCorrectFlag('get', '得');
+    });
+    expect(result.current.correctFlag).toBe(true);
+  });
+
+  it('should mark answer as incorrect  when only symbol is provided', () => {
+    const { result } = renderHook(() => useQuestions());
+
+    act(() => {
+      result.current.judgeCorrectFlag('get', '(');
+    });
+    expect(result.current.correctFlag).toBe(false);
+  });
+
   it('should keep correctFlag as false when incorrect answer is provided', () => {
     const { result } = renderHook(() => useQuestions());
     act(() => {

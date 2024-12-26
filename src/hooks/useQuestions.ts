@@ -12,8 +12,10 @@ export const useQuestions = () => {
       if (japaneseList.length === 0) {
         throw new Error('this word is not correct data');
       }
+      const onlyOneSymbol =
+        /^[\u0021-\u002F\u003A-\u0040\u005B-\u0060\u007B-\u007E]$/;
       const isCorrect =
-        inputtedText.length >= 2 &&
+        !onlyOneSymbol.test(inputtedText) &&
         japaneseList.some((japanese: string) =>
           japanese.includes(inputtedText),
         );

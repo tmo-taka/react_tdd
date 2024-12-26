@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import './App.css';
 import { fetchData, useFetchFromUrl } from './hooks/useFetchFromUrl';
 import { useEnglishStore } from './store/englishStore';
 import { convertToEnglishArr } from './utils/convertToEnglishArr';
