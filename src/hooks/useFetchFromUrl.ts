@@ -16,10 +16,10 @@ export const useFetchFromUrl = (
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   fetchFunction: (url: string) => Promise<any>,
 ) => {
-  const { data, error, isSuccess } = useQuery({
+  const { data, error, isSuccess, refetch } = useQuery({
     queryKey: [key],
     queryFn: () => fetchFunction(url),
   });
 
-  return { data, error, isSuccess };
+  return { data, error, isSuccess, refetch };
 };

@@ -79,5 +79,26 @@ describe('test useFetchFromUrl', () => {
 
       expect(result.current.data).toBeUndefined();
     });
+
+    //refetchした場合
+    it('should called fetchFunction is 2 times and data returned return data when current refetch ', async () => {
+      const { result } = renderHook(
+        () => hooks.useFetchFromUrl('key', testUrl, hooks.fetchData),
+        { wrapper },
+      );
+
+      await waitFor(async () => {
+        return result.current.isSuccess;
+      });
+
+      await result.current.refetch();
+
+      await waitFor(async () => {
+        return result.current.isSuccess;
+      });
+
+      expect(hooks.fetchData).toHaveBeenCalledTimes(2);
+      expect(result.current.data).toEqual(testUrl);
+    });
   });
 });
