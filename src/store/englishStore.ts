@@ -17,7 +17,6 @@ export const getJapanesesByWordAtom = atom((get) => {
   };
 });
 
-// カスタムフックとして使いやすくラップ
 export const useEnglishStore = () => {
   const [englishArr, setEnglishArr] = useAtom(englishArrAtom);
   const [getJapanesesByWord] = useAtom(getJapanesesByWordAtom);
