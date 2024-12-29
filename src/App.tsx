@@ -6,7 +6,11 @@ import { pickQuestions } from './utils/pickQuestions';
 import { QuestionForm } from './components/QuestionForm';
 
 function App() {
-  const { data, isSuccess } = useFetchFromUrl('english', '/api', fetchData);
+  const { data, isSuccess, refetch } = useFetchFromUrl(
+    'english',
+    '/api',
+    fetchData,
+  );
   const { englishArr, setEnglishArr } = useEnglishStore();
   const processData = useCallback(async () => {
     if (!isSuccess || !data) return;
@@ -17,6 +21,9 @@ function App() {
       setEnglishArr(question);
     });
   }, [isSuccess, data, setEnglishArr]);
+  const reGenerateQuestion = () => {
+    refetch();
+  };
   useEffect(() => {
     processData();
   }, [processData]);
@@ -24,7 +31,7 @@ function App() {
     <>
       {isSuccess && englishArr ? (
         <>
-          <button type="button" onClick={() => processData()}>
+          <button type="button" onClick={() => reGenerateQuestion()}>
             問題を再生成する
           </button>
           <ul>

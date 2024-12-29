@@ -3,7 +3,6 @@ import App from './App';
 import { useFetchFromUrl } from './hooks/useFetchFromUrl';
 import { dummyCsvData } from './__test__/dummyCsvData';
 import userEvent from '@testing-library/user-event';
-import { Buttons } from '@testing-library/user-event/dist/types/system/pointer/buttons';
 
 jest.mock('./hooks/useFetchFromUrl');
 const ue = userEvent.setup();
@@ -13,6 +12,7 @@ const mockFetchData = {
     text: () => Promise.resolve(dummyCsvData),
   },
   isSuccess: true,
+  refetch: () => (useFetchFromUrl as jest.Mock).mockReturnValue(mockFetchData),
 };
 
 describe('test App.tsx', () => {
@@ -34,14 +34,15 @@ describe('test App.tsx', () => {
 
   it('should render generateQuestion of button element when isSuccess is true', async () => {
     render(<App />);
+    // NOTE: ここでuseFetchFromUrlのモックをクリアしておく
+    (useFetchFromUrl as jest.Mock).mockClear();
     await waitFor(async () => {
       const buttonElement = screen.queryByRole('button');
       expect(buttonElement).toBeInTheDocument();
       expect(buttonElement).toHaveTextContent('問題を再生成する');
       await ue.click(buttonElement as HTMLButtonElement);
-      // TODO: refetch Button
-      // expect(useFetchFromUrl).toHaveBeenCalledTimes(2);
     });
+    expect(useFetchFromUrl).toHaveBeenCalledTimes(1);
   });
 
   it('should not render yet when isSuccess is false', () => {
