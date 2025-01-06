@@ -17,8 +17,10 @@ export const useFetchFromUrl = (
   fetchFunction: (url: string) => Promise<any>,
 ) => {
   const { data, error, isSuccess, refetch } = useQuery({
-    queryKey: [key],
-    queryFn: () => fetchFunction(url),
+    queryKey: [key, url],
+    queryFn: () => {
+      return fetchFunction(url);
+    },
   });
 
   return { data, error, isSuccess, refetch };

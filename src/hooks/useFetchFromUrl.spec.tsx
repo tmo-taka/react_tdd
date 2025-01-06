@@ -14,6 +14,9 @@ describe('test useFetchFromUrl', () => {
   beforeEach(() => {
     testUrl = 'https://www.dummmy.com/';
   });
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
   describe('test fetchData', () => {
     it('should accepts url', async () => {
       const res = await hooks.fetchData(testUrl);
@@ -87,13 +90,12 @@ describe('test useFetchFromUrl', () => {
         { wrapper },
       );
 
-      await waitFor(async () => {
+      await waitFor(() => {
         return result.current.isSuccess;
       });
-
       await result.current.refetch();
 
-      await waitFor(async () => {
+      await waitFor(() => {
         return result.current.isSuccess;
       });
 

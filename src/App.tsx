@@ -12,21 +12,19 @@ function App() {
     fetchData,
   );
   const { englishArr, setEnglishArr } = useEnglishStore();
-  const processData = useCallback(async () => {
-    if (!isSuccess || !data) return;
-    data.text().then((textData: string) => {
-      const formatToEnglishArr = convertToEnglishArr(textData);
-      const question = pickQuestions(formatToEnglishArr);
-      console.log('何回?');
-      setEnglishArr(question);
-    });
-  }, [isSuccess, data, setEnglishArr]);
+  console.log('App', data, isSuccess, englishArr);
+
   const reGenerateQuestion = () => {
     refetch();
   };
   useEffect(() => {
-    processData();
-  }, [processData]);
+    if (!isSuccess || !data) return;
+    data.text().then((textData: string) => {
+      const formatToEnglishArr = convertToEnglishArr(textData);
+      const question = pickQuestions(formatToEnglishArr);
+      setEnglishArr(question);
+    });
+  }, [isSuccess, data, setEnglishArr]);
   return (
     <>
       {isSuccess && englishArr ? (
