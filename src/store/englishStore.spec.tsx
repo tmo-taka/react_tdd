@@ -46,4 +46,24 @@ describe('test englishStore', () => {
       });
     }).toThrow(new Error('this word is not included in EnglishArr'));
   });
+
+  it('should get initial current is false from word', () => {
+    const { result } = renderHook(() => useEnglishStore(), { wrapper });
+    act(() => {
+      result.current.setEnglishArr(formattedEnglishArr);
+    });
+    expect(result.current.getCurrentByWord('insurance')).toBe(false);
+  });
+
+  it('throw Error when word is not in englishArr is passed ', () => {
+    const { result } = renderHook(() => useEnglishStore(), { wrapper });
+    act(() => {
+      result.current.setEnglishArr(formattedEnglishArr);
+    });
+    expect(() => {
+      act(() => {
+        result.current.getCurrentByWord('test');
+      });
+    }).toThrow(new Error('this word is not included in EnglishArr'));
+  });
 });

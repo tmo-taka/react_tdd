@@ -1,4 +1,3 @@
-import { renderHook } from '@testing-library/react';
 import type { EnglishArr, EnglishObj } from '../domain/englishArr';
 import { pickQuestions } from './pickQuestions';
 
@@ -8,6 +7,7 @@ const generateMockEnglishArr = (n: number): EnglishArr => {
     const dummyObj: EnglishObj = {
       word: `test${i}`,
       japanese: [`テスト${i}`],
+      current: false,
     };
     mock.push(dummyObj);
   }
