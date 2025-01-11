@@ -1,4 +1,5 @@
 import { atom, type Getter, useAtom } from 'jotai';
+import { atomFamily } from 'jotai/utils';
 import type { EnglishArr, EnglishObj } from '../domain/englishArr';
 
 // 基本的なatom
@@ -26,23 +27,39 @@ export const getJapanesesByWordAtom = atom((get) => {
   };
 });
 
-export const getCurrentByWordAtom = atom((get) => {
-  return (word: string) => {
-    const targetObj = searchEnglishObjByWord(word, get);
-    if (!targetObj) return;
-    return targetObj.current;
-  };
-});
+export const currentStatusAtomFamily = atomFamily((word: string) =>
+  atom(
+    (get) => {
+      const targetObj = searchEnglishObjByWord(word, get);
+      if (!targetObj) return;
+      return targetObj.current;
+    },
+    (get, set) => {
+      const targetObj = searchEnglishObjByWord(word, get);
+      if (!targetObj) return;
+      const newTargetObj: EnglishObj = {
+        ...targetObj,
+        current: !targetObj.current,
+      };
+      const englishArr = get(englishArrAtom);
+      set(
+        englishArrAtom,
+        englishArr.map((obj) =>
+          obj.word === newTargetObj.word ? newTargetObj : obj,
+        ),
+      );
+    },
+  ),
+);
 
 export const useEnglishStore = () => {
   const [englishArr, setEnglishArr] = useAtom(englishArrAtom);
   const [getJapanesesByWord] = useAtom(getJapanesesByWordAtom);
-  const [getCurrentByWord] = useAtom(getCurrentByWordAtom);
 
   return {
     englishArr,
     setEnglishArr,
     getJapanesesByWord,
-    getCurrentByWord,
+    currentStatusAtomFamily,
   };
 };

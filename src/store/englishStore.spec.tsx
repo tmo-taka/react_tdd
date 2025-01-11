@@ -1,7 +1,8 @@
 import { renderHook, act } from '@testing-library/react';
-import { useEnglishStore } from './englishStore';
+import { useEnglishStore, englishArrAtom } from './englishStore';
 import { formattedEnglishArr } from '../__test__/formattedEnglishArr';
-import { Provider } from 'jotai';
+import { Provider, useAtom, createStore } from 'jotai';
+import type { EnglishObj } from '../domain/englishArr';
 
 describe('test englishStore', () => {
   const wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -35,7 +36,7 @@ describe('test englishStore', () => {
     ]);
   });
 
-  it('throw Error when word is not in englishArr is passed ', () => {
+  it('should throw Error when word is not in englishArr is passed ', () => {
     const { result } = renderHook(() => useEnglishStore(), { wrapper });
     act(() => {
       result.current.setEnglishArr(formattedEnglishArr);
@@ -48,22 +49,84 @@ describe('test englishStore', () => {
   });
 
   it('should get initial current is false from word', () => {
-    const { result } = renderHook(() => useEnglishStore(), { wrapper });
-    act(() => {
-      result.current.setEnglishArr(formattedEnglishArr);
-    });
-    expect(result.current.getCurrentByWord('insurance')).toBe(false);
+    const createTestStore = () => {
+      const store = createStore();
+      store.set(englishArrAtom, formattedEnglishArr);
+      return store;
+    };
+
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <Provider store={createTestStore()}>{children}</Provider>
+    );
+
+    const { result } = renderHook(
+      () => {
+        const [currentStatus] = useAtom(
+          useEnglishStore().currentStatusAtomFamily('memory'),
+        );
+        return { currentStatus };
+      },
+      { wrapper },
+    );
+
+    expect(result.current.currentStatus).toBe(false);
   });
 
-  it('throw Error when word is not in englishArr is passed ', () => {
-    const { result } = renderHook(() => useEnglishStore(), { wrapper });
-    act(() => {
-      result.current.setEnglishArr(formattedEnglishArr);
-    });
+  it('should throw Error when word is not in englishArr is passed', () => {
+    const createTestStore = () => {
+      const store = createStore();
+      store.set(englishArrAtom, formattedEnglishArr);
+      return store;
+    };
+
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <Provider store={createTestStore()}>{children}</Provider>
+    );
+
     expect(() => {
-      act(() => {
-        result.current.getCurrentByWord('test');
-      });
+      renderHook(
+        () => {
+          console.log(useEnglishStore().englishArr);
+          const [currentStatus] = useAtom(
+            useEnglishStore().currentStatusAtomFamily('test'),
+          );
+          return { currentStatus };
+        },
+        { wrapper },
+      );
     }).toThrow(new Error('this word is not included in EnglishArr'));
+  });
+
+  it('should be able to set currentStatus created from currentAtomFamily', () => {
+    const createTestStore = () => {
+      const store = createStore();
+      store.set(englishArrAtom, formattedEnglishArr);
+      return store;
+    };
+
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <Provider store={createTestStore()}>{children}</Provider>
+    );
+
+    const { result } = renderHook(
+      () => {
+        const [currentStatus, toggleCurrentStatus] = useAtom(
+          useEnglishStore().currentStatusAtomFamily('memory'),
+        );
+        const englishArr = useEnglishStore().englishArr;
+        return { currentStatus, toggleCurrentStatus, englishArr };
+      },
+      { wrapper },
+    );
+
+    expect(result.current.currentStatus).toBe(false);
+    act(() => {
+      result.current.toggleCurrentStatus();
+    });
+    expect(result.current.currentStatus).toBe(true);
+    const memoryWordObj = result.current.englishArr.find(
+      (obj) => obj.word === 'memory',
+    ) as EnglishObj;
+    expect(memoryWordObj).toHaveProperty('current', true);
   });
 });
