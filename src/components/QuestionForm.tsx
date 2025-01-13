@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useQuestions } from '../hooks/useQuestions';
 import {
   getJapanesesByWordAtom,
@@ -28,9 +28,7 @@ export const QuestionForm = (props: Props): JSX.Element => {
     }
     setIsSubmit(true);
   };
-  useEffect(() => {
-    console.log(isCorrect);
-  }, [isCorrect]);
+
   const judgeTextFromCorrectFlag = isCorrect
     ? '正解です。他にも以下の意味があります。'
     : '回答が間違っています。正しくは以下です。';

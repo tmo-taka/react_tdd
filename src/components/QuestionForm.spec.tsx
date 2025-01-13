@@ -120,26 +120,26 @@ describe('test QuestionForm.tsx', () => {
     );
   });
 
-  // it('should div element of region and case of wrongMessage is display when correctFlag is false', async () => {
-  //   render(
-  //     <TestProvider englishArr={formattedEnglishArr}>
-  //       <QuestionForm {..._defaultProps} />
-  //     </TestProvider>,
-  //   );
-  //   const inputText = '間違い';
-  //   const textForm = screen.getByRole('textbox', {
-  //     name: 'Enter translation for tip',
-  //   });
-  //   await user.type(textForm, inputText);
-  //   await user.type(textForm, '{Enter}');
+  it('should div element of region and case of wrongMessage is display when correctFlag is false', async () => {
+    render(
+      <TestProvider englishArr={formattedEnglishArr}>
+        <QuestionForm {..._defaultProps} />
+      </TestProvider>,
+    );
+    const inputText = '間違い';
+    const textForm = screen.getByRole('textbox', {
+      name: 'Enter translation for tip',
+    });
+    await user.type(textForm, inputText);
+    await user.type(textForm, '{Enter}');
 
-  //   const alertBox = await screen.findByRole('region');
-  //   expect(alertBox).toBeInTheDocument();
-  //   expect(alertBox).toHaveTextContent(
-  //     /回答が間違っています。正しくは以下です。/,
-  //   );
-  //   expect(alertBox).toHaveTextContent(
-  //     /\(…の\)先はし先端 \/ 先端に付ける物\(部分\)/,
-  //   );
-  // });
+    const alertBox = await screen.findByRole('region');
+    expect(alertBox).toBeInTheDocument();
+    expect(alertBox).toHaveTextContent(
+      /回答が間違っています。正しくは以下です。/,
+    );
+    expect(alertBox).toHaveTextContent(
+      /\(…の\)先はし先端 \/ 先端に付ける物\(部分\)/,
+    );
+  });
 });
