@@ -48,7 +48,7 @@ describe('test englishStore', () => {
     }).toThrow(new Error('this word is not included in EnglishArr'));
   });
 
-  it('should get initial current is false from word', () => {
+  it('should get initial correct is false from word', () => {
     const createTestStore = () => {
       const store = createStore();
       store.set(englishArrAtom, formattedEnglishArr);
@@ -61,15 +61,15 @@ describe('test englishStore', () => {
 
     const { result } = renderHook(
       () => {
-        const [currentStatus] = useAtom(
-          useEnglishStore().currentStatusAtomFamily('memory'),
+        const [correctStatus] = useAtom(
+          useEnglishStore().correctStatusAtomFamily('memory'),
         );
-        return { currentStatus };
+        return { correctStatus };
       },
       { wrapper },
     );
 
-    expect(result.current.currentStatus).toBe(false);
+    expect(result.current.correctStatus).toBe(false);
   });
 
   it('should throw Error when word is not in englishArr is passed', () => {
@@ -87,17 +87,17 @@ describe('test englishStore', () => {
       renderHook(
         () => {
           console.log(useEnglishStore().englishArr);
-          const [currentStatus] = useAtom(
-            useEnglishStore().currentStatusAtomFamily('test'),
+          const [correctStatus] = useAtom(
+            useEnglishStore().correctStatusAtomFamily('test'),
           );
-          return { currentStatus };
+          return { correctStatus };
         },
         { wrapper },
       );
     }).toThrow(new Error('this word is not included in EnglishArr'));
   });
 
-  it('should be able to set currentStatus created from currentAtomFamily', () => {
+  it('should be able to set correctStatus created from correctAtomFamily', () => {
     const createTestStore = () => {
       const store = createStore();
       store.set(englishArrAtom, formattedEnglishArr);
@@ -110,23 +110,23 @@ describe('test englishStore', () => {
 
     const { result } = renderHook(
       () => {
-        const [currentStatus, toggleCurrentStatus] = useAtom(
-          useEnglishStore().currentStatusAtomFamily('memory'),
+        const [correctStatus, toggleCorrectStatus] = useAtom(
+          useEnglishStore().correctStatusAtomFamily('memory'),
         );
         const englishArr = useEnglishStore().englishArr;
-        return { currentStatus, toggleCurrentStatus, englishArr };
+        return { correctStatus, toggleCorrectStatus, englishArr };
       },
       { wrapper },
     );
 
-    expect(result.current.currentStatus).toBe(false);
+    expect(result.current.correctStatus).toBe(false);
     act(() => {
-      result.current.toggleCurrentStatus();
+      result.current.toggleCorrectStatus();
     });
-    expect(result.current.currentStatus).toBe(true);
+    expect(result.current.correctStatus).toBe(true);
     const memoryWordObj = result.current.englishArr.find(
       (obj) => obj.word === 'memory',
     ) as EnglishObj;
-    expect(memoryWordObj).toHaveProperty('current', true);
+    expect(memoryWordObj).toHaveProperty('correct', true);
   });
 });

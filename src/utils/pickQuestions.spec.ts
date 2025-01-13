@@ -7,7 +7,7 @@ const generateMockEnglishArr = (n: number): EnglishArr => {
     const dummyObj: EnglishObj = {
       word: `test${i}`,
       japanese: [`テスト${i}`],
-      current: false,
+      correct: false,
     };
     mock.push(dummyObj);
   }

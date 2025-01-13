@@ -27,19 +27,19 @@ export const getJapanesesByWordAtom = atom((get) => {
   };
 });
 
-export const currentStatusAtomFamily = atomFamily((word: string) =>
+export const correctStatusAtomFamily = atomFamily((word: string) =>
   atom(
     (get) => {
       const targetObj = searchEnglishObjByWord(word, get);
       if (!targetObj) return;
-      return targetObj.current;
+      return targetObj.correct;
     },
     (get, set) => {
       const targetObj = searchEnglishObjByWord(word, get);
       if (!targetObj) return;
       const newTargetObj: EnglishObj = {
         ...targetObj,
-        current: !targetObj.current,
+        correct: !targetObj.correct,
       };
       const englishArr = get(englishArrAtom);
       set(
@@ -60,6 +60,6 @@ export const useEnglishStore = () => {
     englishArr,
     setEnglishArr,
     getJapanesesByWord,
-    currentStatusAtomFamily,
+    correctStatusAtomFamily,
   };
 };

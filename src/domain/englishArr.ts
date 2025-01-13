@@ -1,7 +1,7 @@
 export type EnglishObj = {
   word: string;
   japanese: string[];
-  current: boolean;
+  correct: boolean;
 };
 
 export type EnglishArr = EnglishObj[];
