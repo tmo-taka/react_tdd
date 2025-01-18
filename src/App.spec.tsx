@@ -45,6 +45,32 @@ describe('test App.tsx', () => {
     expect(useFetchFromUrl).toHaveBeenCalledTimes(1);
   });
 
+  it('should render generateQuestion of button element when isSuccess is true', async () => {
+    render(<App />);
+    // NOTE: ここでuseFetchFromUrlのモックをクリアしておく
+    (useFetchFromUrl as jest.Mock).mockClear();
+    await waitFor(async () => {
+      const buttonElement = screen.queryByRole('button');
+      expect(buttonElement).toBeInTheDocument();
+      expect(buttonElement).toHaveTextContent('問題を再生成する');
+      await ue.click(buttonElement as HTMLButtonElement);
+    });
+    expect(useFetchFromUrl).toHaveBeenCalledTimes(1);
+  });
+
+  it('should render correctAnswerRateElement and initial render is 0', async () => {
+    render(<App />);
+    // NOTE: ここでuseFetchFromUrlのモックをクリアしておく
+    (useFetchFromUrl as jest.Mock).mockClear();
+    await waitFor(async () => {
+      const correctAnswerRateElement = screen.queryByRole('meter', {
+        name: '正答率',
+      });
+      expect(correctAnswerRateElement).toBeInTheDocument();
+      expect(correctAnswerRateElement).toHaveTextContent('正答率：0/10');
+    });
+  });
+
   it('should not render yet when isSuccess is false', () => {
     (useFetchFromUrl as jest.Mock).mockReturnValue({
       ...mockFetchData,
