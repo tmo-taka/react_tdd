@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import { fetchData, useFetchFromUrl } from './hooks/useFetchFromUrl';
 import { useEnglishStore } from './store/englishStore';
 import { convertToEnglishArr } from './utils/convertToEnglishArr';

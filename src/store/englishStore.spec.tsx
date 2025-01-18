@@ -1,7 +1,7 @@
 import { renderHook, act } from '@testing-library/react';
 import { useEnglishStore, englishArrAtom } from './englishStore';
 import { formattedEnglishArr } from '../__test__/formattedEnglishArr';
-import { Provider, useAtom, createStore } from 'jotai';
+import { Provider, useAtom, useSetAtom, createStore } from 'jotai';
 import type { EnglishObj } from '../domain/englishArr';
 
 describe('test englishStore', () => {
@@ -128,5 +128,55 @@ describe('test englishStore', () => {
       (obj) => obj.word === 'memory',
     ) as EnglishObj;
     expect(memoryWordObj).toHaveProperty('correct', true);
+  });
+
+  it('should get initial number of correct is 0', () => {
+    const createTestStore = () => {
+      const store = createStore();
+      store.set(englishArrAtom, formattedEnglishArr);
+      return store;
+    };
+
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <Provider store={createTestStore()}>{children}</Provider>
+    );
+
+    const { result } = renderHook(
+      () => {
+        const englishArr = useEnglishStore().englishArr;
+        const getNumberOfCorrect = useEnglishStore().getNumberOfCorrect;
+        return { englishArr, getNumberOfCorrect };
+      },
+      { wrapper },
+    );
+    expect(result.current.getNumberOfCorrect()).toBe(0);
+  });
+
+  it('should get number of correct is 1 when after toggleCorrectStatus', () => {
+    const createTestStore = () => {
+      const store = createStore();
+      store.set(englishArrAtom, formattedEnglishArr);
+      return store;
+    };
+
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <Provider store={createTestStore()}>{children}</Provider>
+    );
+
+    const { result } = renderHook(
+      () => {
+        const englishArr = useEnglishStore().englishArr;
+        const toggleCorrectStatus = useSetAtom(
+          useEnglishStore().correctStatusAtomFamily('memory'),
+        );
+        const getNumberOfCorrect = useEnglishStore().getNumberOfCorrect;
+        return { englishArr, toggleCorrectStatus, getNumberOfCorrect };
+      },
+      { wrapper },
+    );
+    act(() => {
+      result.current.toggleCorrectStatus();
+    });
+    expect(result.current.getNumberOfCorrect()).toBe(1);
   });
 });

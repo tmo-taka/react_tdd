@@ -27,6 +27,17 @@ export const getJapanesesByWordAtom = atom((get) => {
   };
 });
 
+export const getNumberOfCorrectAtom = atom((get) => {
+  return () => {
+    const englishArr = get(englishArrAtom);
+    const copyEnglishArr = [...englishArr];
+    const correctEnglishArr = copyEnglishArr.filter((english) => {
+      return english.correct === true;
+    });
+    return correctEnglishArr.length;
+  };
+});
+
 export const correctStatusAtomFamily = atomFamily((word: string) =>
   atom(
     (get) => {
@@ -55,11 +66,13 @@ export const correctStatusAtomFamily = atomFamily((word: string) =>
 export const useEnglishStore = () => {
   const [englishArr, setEnglishArr] = useAtom(englishArrAtom);
   const [getJapanesesByWord] = useAtom(getJapanesesByWordAtom);
+  const [getNumberOfCorrect] = useAtom(getNumberOfCorrectAtom);
 
   return {
     englishArr,
     setEnglishArr,
     getJapanesesByWord,
+    getNumberOfCorrect,
     correctStatusAtomFamily,
   };
 };
