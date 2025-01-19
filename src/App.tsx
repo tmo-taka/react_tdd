@@ -31,7 +31,7 @@ function App() {
       {isSuccess && englishArr ? (
         <>
           <button type="button" onClick={() => reGenerateQuestion()}>
-            問題を再生成する
+            問題を返す
           </button>
           <ul>
             {englishArr.map((item) => {
