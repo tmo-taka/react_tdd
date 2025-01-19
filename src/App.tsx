@@ -44,12 +44,12 @@ function App() {
           </ul>
           <div
             role="meter"
-            aria-label="正答率"
+            aria-label="わかった"
             aria-valuemin={0}
             aria-valuemax={DEFAULT_OUTPUT_QUESTIONS_COUNT}
             aria-valuenow={getNumberOfCorrect()}
           >
-            {`正答率：${getNumberOfCorrect()}/${DEFAULT_OUTPUT_QUESTIONS_COUNT}`}
+            {`正q率：${getNumberOfCorrect()}/${DEFAULT_OUTPUT_QUESTIONS_COUNT}`}
           </div>
         </>
       ) : (

@@ -64,10 +64,10 @@ describe('test App.tsx', () => {
     (useFetchFromUrl as jest.Mock).mockClear();
     await waitFor(async () => {
       const correctAnswerRateElement = screen.queryByRole('meter', {
-        name: '正答率',
+        name: '正率',
       });
       expect(correctAnswerRateElement).toBeInTheDocument();
-      expect(correctAnswerRateElement).toHaveTextContent('正答率：0/10');
+      expect(correctAnswerRateElement).toHaveTextContent('正答率0/10');
     });
   });
 
