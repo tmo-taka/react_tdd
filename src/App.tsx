@@ -53,7 +53,7 @@ function App() {
           </div>
         </>
       ) : (
-        <div>ローディング</div>
+        <div>ロー</div>
       )}
     </>
   );
