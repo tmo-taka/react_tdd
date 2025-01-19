@@ -10,6 +10,7 @@ describe('test toJson', () => {
     expect(result[0]).toEqual({
       word: 'ability',
       japanese: ['能力', '力量 / 特殊な才能', '優れた手腕'],
+      correct: false,
     });
     expect(result[0].japanese[0]).toBe('能力');
   });

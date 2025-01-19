@@ -1,9 +1,10 @@
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import { fetchData, useFetchFromUrl } from './hooks/useFetchFromUrl';
 import { useEnglishStore } from './store/englishStore';
 import { convertToEnglishArr } from './utils/convertToEnglishArr';
 import { pickQuestions } from './utils/pickQuestions';
 import { QuestionForm } from './components/QuestionForm';
+import { DEFAULT_OUTPUT_QUESTIONS_COUNT } from './const';
 
 function App() {
   const { data, isSuccess, refetch } = useFetchFromUrl(
@@ -11,7 +12,7 @@ function App() {
     '/api',
     fetchData,
   );
-  const { englishArr, setEnglishArr } = useEnglishStore();
+  const { englishArr, setEnglishArr, getNumberOfCorrect } = useEnglishStore();
   console.log('App', data, isSuccess, englishArr);
 
   const reGenerateQuestion = () => {
@@ -41,6 +42,15 @@ function App() {
               );
             })}
           </ul>
+          <div
+            role="meter"
+            aria-label="正答率"
+            aria-valuemin={0}
+            aria-valuemax={DEFAULT_OUTPUT_QUESTIONS_COUNT}
+            aria-valuenow={getNumberOfCorrect()}
+          >
+            {`正答率：${getNumberOfCorrect()}/${DEFAULT_OUTPUT_QUESTIONS_COUNT}`}
+          </div>
         </>
       ) : (
         <div>ローディング</div>

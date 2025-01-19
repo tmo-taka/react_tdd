@@ -36,45 +36,31 @@ describe('test useQuestions', () => {
   it('should mark answer as correct when exact match is provided', () => {
     const { result } = renderHook(() => useQuestions());
 
-    act(() => {
-      result.current.judgeCorrectFlag('get', '得る(受動態にできない)');
-    });
-    expect(result.current.correctFlag).toBe(true);
+    expect(
+      result.current.judgeCorrectFlag('get', '得る(受動態にできない)'),
+    ).toBe(true);
   });
 
   it('should mark answer as correct when partial match is provided', () => {
     const { result } = renderHook(() => useQuestions());
 
-    act(() => {
-      result.current.judgeCorrectFlag('get', '得る');
-    });
-    expect(result.current.correctFlag).toBe(true);
+    expect(result.current.judgeCorrectFlag('get', '得る')).toBe(true);
   });
 
   it('should mark answer as correct when partial match and even single character is provided', () => {
     const { result } = renderHook(() => useQuestions());
 
-    act(() => {
-      result.current.judgeCorrectFlag('get', '得');
-    });
-    expect(result.current.correctFlag).toBe(true);
+    expect(result.current.judgeCorrectFlag('get', '得')).toBe(true);
   });
 
   it('should mark answer as incorrect  when only symbol is provided', () => {
     const { result } = renderHook(() => useQuestions());
-
-    act(() => {
-      result.current.judgeCorrectFlag('get', '(');
-    });
-    expect(result.current.correctFlag).toBe(false);
+    expect(result.current.judgeCorrectFlag('get', '(')).toBe(false);
   });
 
   it('should keep correctFlag as false when incorrect answer is provided', () => {
     const { result } = renderHook(() => useQuestions());
-    act(() => {
-      result.current.judgeCorrectFlag('get', 'ご飯');
-    });
-    expect(result.current.correctFlag).toBe(false);
+    expect(result.current.judgeCorrectFlag('get', 'ご飯')).toBe(false);
   });
 
   it('should throw an error when list of japanese is empty', () => {

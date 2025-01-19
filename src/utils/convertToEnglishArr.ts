@@ -6,6 +6,7 @@ export const convertToEnglishArr = (csvData: string): EnglishArr => {
     const obj: EnglishObj = {
       word: '',
       japanese: [],
+      correct: false,
     };
     line.split(',').map((word, index) => {
       const convertWord = word.trim().replace(/[『』]/g, '');
