@@ -5,10 +5,7 @@ import type { EnglishArr, EnglishObj } from '../domain/englishArr';
 // 基本的なatom
 export const englishArrAtom = atom<EnglishArr>([]);
 
-const searchEnglishObjByWord = (
-  word: string,
-  get: Getter,
-): EnglishObj | undefined => {
+const searchEnglishObjByWord = (word: string, get: Getter): EnglishObj => {
   const englishArr = get(englishArrAtom);
   const targetObj: EnglishObj | undefined = englishArr.find((english) => {
     return english.word === word;
@@ -22,7 +19,6 @@ const searchEnglishObjByWord = (
 export const getJapanesesByWordAtom = atom((get) => {
   return (word: string) => {
     const targetObj = searchEnglishObjByWord(word, get);
-    if (!targetObj) return;
     return targetObj.japanese;
   };
 });
@@ -42,12 +38,10 @@ export const correctStatusAtomFamily = atomFamily((word: string) =>
   atom(
     (get) => {
       const targetObj = searchEnglishObjByWord(word, get);
-      if (!targetObj) return;
       return targetObj.correct;
     },
     (get, set) => {
       const targetObj = searchEnglishObjByWord(word, get);
-      if (!targetObj) return;
       const newTargetObj: EnglishObj = {
         ...targetObj,
         correct: !targetObj.correct,

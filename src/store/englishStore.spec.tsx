@@ -86,7 +86,6 @@ describe('test englishStore', () => {
     expect(() => {
       renderHook(
         () => {
-          console.log(useEnglishStore().englishArr);
           const [correctStatus] = useAtom(
             useEnglishStore().correctStatusAtomFamily('test'),
           );

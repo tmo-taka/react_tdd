@@ -10,7 +10,7 @@
     "fix": "biome lint --write  **/*.{ts,tsx}",
     "fmt": "biome format --write  **/*.{ts,tsx}",
     "preview": "vite preview",
-    "test": "jest"
+    "test": "jest --coverage --coverageReporters=html"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.62.3",

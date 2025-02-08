@@ -13,7 +13,6 @@ function App() {
     fetchData,
   );
   const { englishArr, setEnglishArr, getNumberOfCorrect } = useEnglishStore();
-  console.log('App', data, isSuccess, englishArr);
 
   const reGenerateQuestion = () => {
     refetch();
