@@ -47,10 +47,10 @@ describe('test useQuestions', () => {
     expect(result.current.judgeCorrectFlag('get', '得る')).toBe(true);
   });
 
-  it('should mark answer as correct when partial match and even single character is provided', () => {
+  it('should not mark answer as correct when partial match and even single character is provided', () => {
     const { result } = renderHook(() => useQuestions());
 
-    expect(result.current.judgeCorrectFlag('get', '得')).toBe(true);
+    expect(result.current.judgeCorrectFlag('get', '得')).toBe(false);
   });
 
   it('should mark answer as incorrect  when only symbol is provided', () => {

@@ -12,6 +12,19 @@ export const analyzeOfText = (text: string): Map<string, number> => {
   return mapFreq;
 };
 
+export const splitText = (text: string) => {
+  const parts = text.split('/');
+
+  return parts.flatMap((part) => {
+    const matches = part.trim().match(/^(.+?)\((.+?)\)$/);
+    if (matches) {
+      return [matches[1].trim(), matches[2].trim()];
+    }
+    const trimmedPart = part.trim();
+    return trimmedPart ? [trimmedPart] : [];
+  });
+};
+
 export const computedOfSimilarity = (
   inputFreq: Map<string, number>,
   answerFreq: Map<string, number>,
@@ -47,8 +60,12 @@ export const checkerSimilarity = (
   inputText: string,
   answerText: string,
 ): number => {
+  const answerArr = splitText(answerText);
   const inputFreq = analyzeOfText(inputText);
-  const answerFreq = analyzeOfText(answerText);
-  const similarity = computedOfSimilarity(inputFreq, answerFreq);
-  return similarity;
+  const answersFreq = answerArr.map((answer) => analyzeOfText(answer));
+  const similarityArr = answersFreq.map((answerFreq) =>
+    computedOfSimilarity(inputFreq, answerFreq),
+  );
+  const maxOfSimilarity = Math.max(...similarityArr);
+  return maxOfSimilarity;
 };

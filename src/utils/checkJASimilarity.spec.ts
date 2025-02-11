@@ -2,6 +2,7 @@ import {
   analyzeOfText,
   checkerSimilarity,
   computedOfSimilarity,
+  splitText,
 } from './checkJASimilarity';
 
 describe('test analyzeOfTex', () => {
@@ -65,6 +66,39 @@ describe('test computedOfSimilarity', () => {
   });
 });
 
+describe('test splitText', () => {
+  it('should split 2word and output type of array when passed text includes parentheses', () => {
+    const text = '得る(受動態にできない)';
+    const splittedWord = splitText(text);
+    expect(splittedWord).toEqual(['得る', '受動態にできない']);
+  });
+  it('should not split word and output type of array when passed text not includes parentheses', () => {
+    const text = 'と感じる';
+    const splittedWord = splitText(text);
+    expect(splittedWord).toEqual(['と感じる']);
+  });
+  it('should approve split word and output type of array when passed irregular text includes empty', () => {
+    const text = '得る(受動態にできない) / ';
+    const splittedWord = splitText(text);
+    expect(splittedWord).toEqual(['得る', '受動態にできない']);
+  });
+  it('should output empty array when irregular text pattern', () => {
+    const text = ' / ';
+    const splittedWord = splitText(text);
+    expect(splittedWord).toEqual([]);
+  });
+  it('should approve split word and output type of array when passed text includes parentheses', () => {
+    const text = '得る(受動態にできない) /  もらう(受動態にできない)';
+    const splittedWord = splitText(text);
+    expect(splittedWord).toEqual([
+      '得る',
+      '受動態にできない',
+      'もらう',
+      '受動態にできない',
+    ]);
+  });
+});
+
 describe('test checkerSimilarity', () => {
   it('should similarity is 1.00 when inputText and answerText is same word', () => {
     const similarity = checkerSimilarity('本を読む', '本を読む');
@@ -73,5 +107,9 @@ describe('test checkerSimilarity', () => {
   it('should similarity is 0.00 when inputText and answerText is different word', () => {
     const similarity = checkerSimilarity('本を読む', '空で飛ぶ');
     expect(similarity).toBe(0.0);
+  });
+  it('should similarity is 1.00 when inputText and answerText is different word', () => {
+    const similarity = checkerSimilarity('得る', '得る(受動態にできない)');
+    expect(similarity).toBe(1.0);
   });
 });

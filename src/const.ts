@@ -1,1 +1,2 @@
 export const DEFAULT_OUTPUT_QUESTIONS_COUNT = 10;
+export const SIMILARITY_THRESHOLD = 0.6;
