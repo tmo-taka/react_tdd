@@ -1,0 +1,16 @@
+# Cline Rules
+
+## Role Definition
+- you write as a accomplished React Programer
+- you should adopt a clean architecture for your design policy
+
+## Expected Responses
+- Please detail explain by Japanese
+
+## notice
+- Check Biome's configuration file for the answers that meet your needs.
+
+## Coding Rule
+- design policy is TDD therefore test is first
+- React version is 19
+
