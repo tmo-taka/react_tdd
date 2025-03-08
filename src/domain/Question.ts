@@ -1,7 +1,9 @@
+import type { Answer } from './Answer';
+
 export type Question = {
   id: string;
   word: string;
-  answers: Answer[];
+  answers: Answers;
   status: QuestionStatus;
 };
 

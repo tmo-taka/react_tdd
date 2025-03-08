@@ -1,22 +1,33 @@
 import { DEFAULT_OUTPUT_QUESTIONS_COUNT } from '../const';
-import type { EnglishArr } from '../domain/englishArr';
+import type { Question } from '../domain/Question';
+import type { Quiz } from '../domain/Quiz';
 
 const generateRandom = (max: number) => Math.floor(Math.random() * max);
 
-export const pickQuestions = (englishArr: EnglishArr): EnglishArr => {
-  if (englishArr.length < DEFAULT_OUTPUT_QUESTIONS_COUNT) {
+export const pickQuestions = (allQuestions: Question[]): Question[] => {
+  if (allQuestions.length < DEFAULT_OUTPUT_QUESTIONS_COUNT) {
     throw new Error(
       `An array with less than ${DEFAULT_OUTPUT_QUESTIONS_COUNT} items was passed`,
     );
   }
 
-  const questions: EnglishArr = [];
+  const questionsCopy = [...allQuestions];
+  const selectedQuestions: Question[] = [];
+
   for (let i = 0; i < DEFAULT_OUTPUT_QUESTIONS_COUNT; i++) {
-    const randomNumber = generateRandom(englishArr.length);
-    const targetEnglish = englishArr[randomNumber];
-    englishArr.splice(randomNumber, 1);
-    questions.push(targetEnglish);
+    const randomNumber = generateRandom(questionsCopy.length);
+    const targetQuestion = questionsCopy[randomNumber];
+    questionsCopy.splice(randomNumber, 1);
+    selectedQuestions.push(targetQuestion);
   }
 
-  return questions;
+  return selectedQuestions;
+};
+
+export const createQuiz = (questions: Question[]): Quiz => {
+  return {
+    id: `quiz-${Date.now()}`,
+    questions,
+    score: 0,
+  };
 };
