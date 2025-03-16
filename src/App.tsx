@@ -1,10 +1,9 @@
 import { useEffect } from 'react';
 import { fetchData, useFetchFromUrl } from './hooks/useFetchFromUrl';
-import { useEnglishStore } from './store/englishStore';
-import { convertToEnglishArr } from './utils/convertToEnglishArr';
+import { useQuizStore } from './store/quizStore';
+import { convertToQuestions } from './utils/convertToQuestions';
 import { pickQuestions } from './utils/pickQuestions';
 import { QuestionForm } from './components/QuestionForm';
-import { DEFAULT_OUTPUT_QUESTIONS_COUNT } from './const';
 
 function App() {
   const { data, isSuccess, refetch } = useFetchFromUrl(
@@ -12,31 +11,38 @@ function App() {
     '/api',
     fetchData,
   );
-  const { englishArr, setEnglishArr, getNumberOfCorrect } = useEnglishStore();
+  const {
+    questions,
+    createQuiz: initializeQuiz,
+    getCorrectCount,
+    getTotalQuestionsCount,
+  } = useQuizStore();
 
   const reGenerateQuestion = () => {
     refetch();
   };
+
   useEffect(() => {
     if (!isSuccess || !data) return;
     data.text().then((textData: string) => {
-      const formatToEnglishArr = convertToEnglishArr(textData);
-      const question = pickQuestions(formatToEnglishArr);
-      setEnglishArr(question);
+      const allQuestions = convertToQuestions(textData);
+      const selectedQuestions = pickQuestions(allQuestions);
+      initializeQuiz(selectedQuestions);
     });
-  }, [isSuccess, data, setEnglishArr]);
+  }, [isSuccess, data, initializeQuiz]);
+
   return (
     <>
-      {isSuccess && englishArr ? (
+      {isSuccess && questions.length > 0 ? (
         <>
           <button type="button" onClick={() => reGenerateQuestion()}>
             問題を再生成する
           </button>
           <ul>
-            {englishArr.map((item) => {
+            {questions.map((question) => {
               return (
-                <li key={item.word}>
-                  <QuestionForm word={item.word} />
+                <li key={question.id}>
+                  <QuestionForm question={question} />
                 </li>
               );
             })}
@@ -45,10 +51,10 @@ function App() {
             role="meter"
             aria-label="正答率"
             aria-valuemin={0}
-            aria-valuemax={DEFAULT_OUTPUT_QUESTIONS_COUNT}
-            aria-valuenow={getNumberOfCorrect()}
+            aria-valuemax={getTotalQuestionsCount}
+            aria-valuenow={getCorrectCount}
           >
-            {`正答率：${getNumberOfCorrect()}/${DEFAULT_OUTPUT_QUESTIONS_COUNT}`}
+            {`正答率：${getCorrectCount}/${getTotalQuestionsCount}`}
           </div>
         </>
       ) : (
