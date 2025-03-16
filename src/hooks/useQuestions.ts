@@ -1,31 +1,38 @@
 import { useCallback } from 'react';
-import { getJapanesesByWordAtom } from '../store/englishStore';
-import { useAtomValue, useSetAtom } from 'jotai';
 import { checkerSimilarity } from '../utils/checkJASimilarity';
 import { SIMILARITY_THRESHOLD } from '../const';
+import { useQuizStore } from '../store/quizStore';
+import type { Question } from '../domain/Question';
 
 export const useQuestions = () => {
-  const getJapanesesByWord = useAtomValue(getJapanesesByWordAtom);
+  const { getQuestionById, updateQuestionStatus } = useQuizStore();
 
-  const judgeCorrectFlag = useCallback(
-    (word: string, inputtedText: string) => {
-      const japaneseList = getJapanesesByWord(word);
-      if ((japaneseList as string[]).length === 0) {
-        throw new Error('this word is not correct data');
+  const judgeAnswer = useCallback(
+    (questionId: string, inputtedText: string): boolean => {
+      const question = getQuestionById(questionId);
+
+      if (!question || question.answers.length === 0) {
+        throw new Error('Question not found or has no answers');
       }
+
       const onlyOneSymbol =
         /^[\u0021-\u002F\u003A-\u0040\u005B-\u0060\u007B-\u007E]$/;
+
       const isCorrect =
         !onlyOneSymbol.test(inputtedText) &&
-        (japaneseList as string[]).some((japanese: string) => {
-          const similarity = checkerSimilarity(inputtedText, japanese);
+        question.answers.some((answer) => {
+          const similarity = checkerSimilarity(inputtedText, answer);
           console.log(similarity);
           return similarity >= SIMILARITY_THRESHOLD;
         });
+
+      // 正解状態を更新
+      updateQuestionStatus(questionId, isCorrect ? 'correct' : 'incorrect');
+
       return isCorrect;
     },
-    [getJapanesesByWord],
+    [getQuestionById, updateQuestionStatus],
   );
 
-  return { judgeCorrectFlag };
+  return { judgeAnswer };
 };
