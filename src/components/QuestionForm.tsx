@@ -1,31 +1,25 @@
 import { useState } from 'react';
 import { useQuestions } from '../hooks/useQuestions';
-import {
-  getJapanesesByWordAtom,
-  correctStatusAtomFamily,
-} from '../store/englishStore';
-import { useAtom, useAtomValue } from 'jotai';
+import { useAtomValue } from 'jotai';
+import { getQuestionByIdAtom } from '../store/quizStore';
+import type { Question } from '../domain/Question';
 
 type Props = {
-  word: string;
+  question: Question;
 };
 
 export const QuestionForm = (props: Props): JSX.Element => {
   const [text, setText] = useState('');
   const [isSubmit, setIsSubmit] = useState(false);
-  const { judgeCorrectFlag } = useQuestions();
-  const getJapanesesByWord = useAtomValue(getJapanesesByWordAtom);
-  const [isCorrect, toggleCorrect] = useAtom(
-    correctStatusAtomFamily(props.word),
-  );
-  const japaneseList = getJapanesesByWord(props.word);
+  const { judgeAnswer } = useQuestions();
+  const getQuestionById = useAtomValue(getQuestionByIdAtom);
+
+  const question = getQuestionById(props.question.id);
+  const isCorrect = question?.status === 'correct';
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(judgeCorrectFlag(props.word, text));
-    if (judgeCorrectFlag(props.word, text)) {
-      toggleCorrect();
-    }
+    judgeAnswer(props.question.id, text);
     setIsSubmit(true);
   };
 
@@ -35,13 +29,13 @@ export const QuestionForm = (props: Props): JSX.Element => {
 
   return (
     <form onSubmit={(e) => handleSubmit(e)}>
-      <label htmlFor={`word-${props.word}`}>{props.word}</label>
+      <label htmlFor={`word-${props.question.id}`}>{props.question.word}</label>
       <br />
       <input
-        id={`word-${props.word}`}
+        id={`word-${props.question.id}`}
         type="text"
         value={text}
-        aria-label={`Enter translation for ${props.word}`}
+        aria-label={`Enter translation for ${props.question.word}`}
         onChange={(e) => setText(e.target.value)}
       />
 
@@ -50,8 +44,8 @@ export const QuestionForm = (props: Props): JSX.Element => {
         <div role="region" aria-expanded={isSubmit}>
           {judgeTextFromCorrectFlag}
           <ul>
-            {(japaneseList as string[]).map((japanese) => (
-              <li key={japanese}>{japanese}</li>
+            {props.question.answers.map((answer) => (
+              <li key={answer}>{answer}</li>
             ))}
           </ul>
         </div>

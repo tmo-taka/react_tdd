@@ -1,37 +1,42 @@
 import { QuestionForm } from './QuestionForm';
 import { screen, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { formattedEnglishArr } from '../__test__/formattedEnglishArr';
+import { formattedQuestions } from '../__test__/formattedQuestions';
 import { Provider } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
-import { englishArrAtom } from '../store/englishStore';
-import type { EnglishArr } from '../domain/englishArr';
+import { questionsAtom } from '../store/quizStore';
+import type { Question } from '../domain/Question';
 
 const user = userEvent.setup();
 
 type ArgsOfProvider = {
-  englishArr: EnglishArr;
+  questions: Question[];
   children: React.ReactNode;
 };
 
-const HydrateAtoms = ({ englishArr, children }: ArgsOfProvider) => {
-  useHydrateAtoms([[englishArrAtom, englishArr]] as const);
+const HydrateAtoms = ({ questions, children }: ArgsOfProvider) => {
+  useHydrateAtoms([[questionsAtom, questions]] as const);
   return children;
 };
 
-const TestProvider = ({ englishArr, children }: ArgsOfProvider) => (
+const TestProvider = ({ questions, children }: ArgsOfProvider) => (
   <Provider>
-    <HydrateAtoms englishArr={englishArr}>{children}</HydrateAtoms>
+    <HydrateAtoms questions={questions}>{children}</HydrateAtoms>
   </Provider>
 );
 
 describe('test QuestionForm.tsx', () => {
   let _defaultProps: {
-    word: string;
+    question: Question;
   };
   beforeEach(() => {
     _defaultProps = {
-      word: 'tip',
+      question: {
+        id: 'question-7',
+        word: 'tip',
+        answers: ['(…の)先', 'はし', '先端 / 先端に付ける物(部分)'],
+        status: 'unanswered',
+      },
     };
   });
   afterEach(() => {
@@ -39,7 +44,7 @@ describe('test QuestionForm.tsx', () => {
   });
   it('should have a textForm and value is empty', () => {
     render(
-      <TestProvider englishArr={formattedEnglishArr}>
+      <TestProvider questions={formattedQuestions}>
         <QuestionForm {..._defaultProps} />
       </TestProvider>,
     );
@@ -55,7 +60,7 @@ describe('test QuestionForm.tsx', () => {
 
   it('should update value when typing in textForm', async () => {
     render(
-      <TestProvider englishArr={formattedEnglishArr}>
+      <TestProvider questions={formattedQuestions}>
         <QuestionForm {..._defaultProps} />
       </TestProvider>,
     );
@@ -101,7 +106,7 @@ describe('test QuestionForm.tsx', () => {
 
   it('should div element of region and case of correctMessage is display when correctFlag is true', async () => {
     render(
-      <TestProvider englishArr={formattedEnglishArr}>
+      <TestProvider questions={formattedQuestions}>
         <QuestionForm {..._defaultProps} />
       </TestProvider>,
     );
@@ -122,7 +127,7 @@ describe('test QuestionForm.tsx', () => {
 
   it('should div element of region and case of wrongMessage is display when correctFlag is false', async () => {
     render(
-      <TestProvider englishArr={formattedEnglishArr}>
+      <TestProvider questions={formattedQuestions}>
         <QuestionForm {..._defaultProps} />
       </TestProvider>,
     );
