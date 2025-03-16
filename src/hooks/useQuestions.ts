@@ -2,7 +2,6 @@ import { useCallback } from 'react';
 import { checkerSimilarity } from '../utils/checkJASimilarity';
 import { SIMILARITY_THRESHOLD } from '../const';
 import { useQuizStore } from '../store/quizStore';
-import type { Question } from '../domain/Question';
 
 export const useQuestions = () => {
   const { getQuestionById, updateQuestionStatus } = useQuizStore();

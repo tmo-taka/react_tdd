@@ -1,8 +1,7 @@
 import { renderHook, act } from '@testing-library/react';
 import { formattedQuestions } from '../__test__/formattedQuestions';
-import { Provider, useAtom, useSetAtom, createStore } from 'jotai';
+import { Provider } from 'jotai';
 import { useQuizStore } from './quizStore';
-// import type { EnglishObj } from '../domain/englishArr';
 
 describe('test quizStore', () => {
   const wrapper = ({ children }: { children: React.ReactNode }) => (
