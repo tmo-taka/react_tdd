@@ -1,4 +1,4 @@
-import { atom, type useAtom, useAtomValue } from 'jotai';
+import { atom, useAtom, useAtomValue } from 'jotai';
 import type { Question } from '../domain/Question';
 import type { Quiz } from '../domain/Quiz';
 import type { QuestionStatus } from '../domain/Question';
